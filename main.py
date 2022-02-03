@@ -1,4 +1,3 @@
-import requests
 import socket
 import csv
 import random
@@ -31,8 +30,10 @@ def goto_the_wanted_page(req):
             return HDRS.encode('utf-8') + 'not found'.encode('utf-8')
     elif any([link[0].split('/')[-1] in req for link in data_from_csv]):
         url = 'http://localhost:8080' + req.split(' ')[1]
-    else: return 'skip'
-    html = f'''<!DOCTYPE html>
+    else: 
+        return 'skip'
+    html = f'''
+    <!DOCTYPE html>
     <html>
     
     <head>
@@ -45,6 +46,7 @@ def goto_the_wanted_page(req):
     
     </html>'''
     return HDRS.encode('utf-8') + bytes(html, 'utf-8')
+
 
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -65,7 +67,7 @@ def start_server():
 data_from_csv = []
 data_from_csv_showed = []
 with open("CSVFILENAME.csv", encoding='utf-8') as read_file:
-    file_reader = csv.reader(read_file, delimiter = ";")
+    file_reader = csv.reader(read_file, delimiter=";")
     for row in file_reader:
         data_from_csv.append(row)
 if __name__ == '__main__':
