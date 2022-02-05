@@ -42,6 +42,7 @@ def goto_wanted_page(request):
         print('skip') 
         return 'skip'
 
+
 def empty_request_received():
     """
     Обрабатывает пустой запрос.
@@ -85,7 +86,8 @@ def direct_request_received(splited_request):
             return message
     else: 
         return HDRS + 'not found'.encode('utf-8')
-    
+
+
 def wrap_in__html(url):
     """ 
     Получает url необходимой к показу картинки и вставляет её в html шаблон
@@ -132,7 +134,6 @@ def start_server():
         client_socket.send(message)
 
 
-
 def fill_data():
     """ 
     Считывает csv файл и возвращает список из строк csv файла и пустой список, 
@@ -153,6 +154,3 @@ def fill_data():
 if __name__ == '__main__':
     data, data_showed = fill_data()
     start_server()
-
-# http://localhost:8080/?category[]=flight&category[]=blocks
-# http://localhost:8080/?category[]=test
