@@ -5,4 +5,6 @@
 
 Конфигурационный файл   ```CSVFILENAME.csv```
 
-Доступные категории: flight;airlplane;show;britain;bennyhill;sketches;tv;games;minecraft;blocks;sandbox;onlycategory;test
+Доступные категории: 
+
+```flight``` ```airlplane``` ```show``` ```britain``` ```bennyhill``` ```sketches``` ```tv;games``` ```minecraft``` ```blocks``` ```sandbox``` ```onlycategory``` ```test```
