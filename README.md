@@ -16,4 +16,4 @@ http://localhost:8080/
 
 http://localhost:8080/?category[]=show&category[]=test
 
-http://localhost:8080/?category[]=blocks```
+http://localhost:8080/?category[]=blocks
