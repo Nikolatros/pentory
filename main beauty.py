@@ -13,26 +13,33 @@ def goto_wanted_page(request):
         request (str): GET запрос
 
     Returns:
-        [type]: [description]
+        [bytes]: контент соответсвующий запросу
+        or
+        [str]: 'skip'
     """
     print('gtwp')     
     if len(data) == 0:
         # в случае, если все картинки были показаны
         return HDRS + 'no more pictures :('.encode('utf-8')
 
-    splited_request = request.split(' ')[1] # look like: "/?category[]=auto&category[]=trains" or "/" or "static/image4.jpg"  
+    splited_request = request.split(' ')[1] # look like: "/?category[]=auto&category[]=trains" or "/" or "static/image4.jpg" 
+    print(splited_request) 
     if splited_request == '/':
+        print('SR')
         # обработка пустого запроса
         return empty_request_received() 
     elif 'category[]=' in splited_request:
+        print('DR')
         # обработка прямого запроса
         return direct_request_received(splited_request)
     elif any([link[0].split('/')[-1] in splited_request for link in data]):
+        print('ER')
         # в случае получения ссыки
         url = 'http://localhost:8080' + splited_request
         message = wrap_in__html(url)
         return message
-    else: 
+    else:
+        print('skip') 
         return 'skip'
 
 def empty_request_received():
@@ -42,8 +49,7 @@ def empty_request_received():
 
     Returns:
         [bytes]: html обёртка с картинкой из случайной категории
-    """
-    print('err')    
+    """   
     random_category = random.choice(data)
     url = random_category[0]
     random_category[1] = str(int(random_category[1])-1)
@@ -65,7 +71,6 @@ def direct_request_received(splited_request):
     Returns:
         [bytes]: html обёртка с картинкой из требуемой категории
     """    
-    print('drr')
     desired_category = splited_request.split('category[]=') # look like: ['/?', 'auto&', 'cats&', 'trains']
     desired_category = [category[:-1] for category in desired_category[1:-1]] + [desired_category[-1]]
     # look like: ['auto', 'cats'] + ['trains']
@@ -118,12 +123,10 @@ def start_server():
     while 1:
         print('\nStart...')
         client_socket, address = server.accept()
-        print('+++++')
         request = client_socket.recv(1024).decode('utf-8')
         if len(request) == 0:
             continue
         message = goto_wanted_page(request)
-        print(message)
         if message == 'skip':
             continue
         client_socket.send(message)
