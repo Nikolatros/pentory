@@ -6,6 +6,26 @@ import random
 HDRS = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n'.encode('utf-8')
 
 
+def start_server():
+    """ 
+    Запускает работу сервера
+    """    
+    data, data_showed = fill_data()
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(('localhost',8080))
+    server.listen(4)
+    while 1:
+        print('\nStart...')
+        client_socket, address = server.accept()
+        request = client_socket.recv(1024).decode('utf-8')
+        if len(request) == 0:
+            continue
+        message, data, data_showed = goto_wanted_page(request, data, data_showed)
+        if message == 'skip':
+            continue
+        client_socket.send(message)
+
+
 def fill_data():
     """ 
     Считывает csv файл и возвращает список из строк csv файла и пустой список, 
@@ -60,7 +80,7 @@ def goto_wanted_page(request, data, data_showed):
         print('ER')
         # в случае получения ссыки
         url = 'http://localhost:8080' + splited_request
-        message = wrap_in__html(url)
+        message = wrap_in_html(url)
         return message, data, data_showed
     else:
         print('skip') 
@@ -88,7 +108,7 @@ def empty_request_received(data, data_showed):
     random_category[1] = str(int(random_category[1])-1)
     if random_category[1] == '0':
         data_showed.append(data.pop(data.index(random_category)))
-    message = wrap_in__html(url)
+    message = wrap_in_html(url)
     return message, data, data_showed
 
 
@@ -98,7 +118,6 @@ def direct_request_received(splited_request, data, data_showed):
     Считает количество оставшихся показов для запроса.
     Возвращает требуемый контент или 'not found' в случае невозможности показать категорию, 
     обновлённые списки строк конфигурационного файла.
-
 
     Args:
         splited_request (str): строка с запрашиваемыми категориями
@@ -120,13 +139,13 @@ def direct_request_received(splited_request, data, data_showed):
             categories[1] = str(int(categories[1])-1)
             if categories[1] == '0':
                 data_showed.append(data.pop(data.index(categories)))
-            message = wrap_in__html(url)
+            message = wrap_in_html(url)
             return message, data, data_showed
     else: 
         return HDRS + 'not found'.encode('utf-8'), data, data_showed
 
 
-def wrap_in__html(url):
+def wrap_in_html(url):
     """ 
     Получает url необходимой к показу картинки и вставляет её в html шаблон
 
@@ -150,24 +169,4 @@ def wrap_in__html(url):
     </body>
     
     </html>'''
-    return HDRS + html.encode('utf-8')  
-
-
-def start_server():
-    """ 
-    Запускает работу сервера
-    """    
-    data, data_showed = fill_data()
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(('localhost',8080))
-    server.listen(4)
-    while 1:
-        print('\nStart...')
-        client_socket, address = server.accept()
-        request = client_socket.recv(1024).decode('utf-8')
-        if len(request) == 0:
-            continue
-        message, data, data_showed = goto_wanted_page(request, data, data_showed)
-        if message == 'skip':
-            continue
-        client_socket.send(message)
+    return HDRS + html.encode('utf-8')
